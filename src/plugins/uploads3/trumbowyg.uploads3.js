@@ -13,6 +13,7 @@
         var $ = window.$;
     
         var defaultOptions = {
+            getS3KeyURL: '',
             serverPath: '',
             fileFieldName: 'fileToUpload',
             data: [],                       // Additional data for ajax [{name: 'key', value: 'value'}]
@@ -139,82 +140,80 @@
     
                                     // Callback
                                     function (values) {
-                                        var data = new FormData();
-                                        data.append(trumbowyg.o.plugins.upload.fileFieldName, file);
-    
-                                        trumbowyg.o.plugins.upload.data.map(function (cur) {
-                                            data.append(cur.name, cur.value);
-                                        });
-                                        
-                                        $.map(values, function(curr, key){
-                                            if(key !== 'file') { 
-                                                data.append(key, curr);
-                                            }
-                                        });
-    
-                                        if ($('.' + prefix + 'progress', $modal).length === 0) {
-                                            $('.' + prefix + 'modal-title', $modal)
-                                                .after(
-                                                    $('<div/>', {
-                                                        'class': prefix + 'progress'
-                                                    }).append(
+
+                                        // Get getS3KeyURL 
+                                        $.get( trumbowyg.o.plugins.upload.getS3KeyURL, function(res) {
+                                            const S3 = res.form_data;
+                                            let templateFormData = new FormData();
+                                            templateFormData.append('key', S3.key + '/' + file.name);
+                                            templateFormData.append('AWSAccessKeyId', S3.AWSAccessKeyId);
+                                            templateFormData.append('acl', S3.acl);
+                                            templateFormData.append('policy', S3.policy);
+                                            templateFormData.append('signature', S3.signature);
+                                            templateFormData.append('success_action_status', S3.success_action_status);
+                                            templateFormData.append('file', file);
+
+                                            if ($('.' + prefix + 'progress', $modal).length === 0) {
+                                                $('.' + prefix + 'modal-title', $modal)
+                                                    .after(
                                                         $('<div/>', {
-                                                            'class': prefix + 'progress-bar'
-                                                        })
-                                                    )
-                                                );
-                                        }
-    
-                                        $.ajax({
-                                            url: trumbowyg.o.plugins.upload.serverPath,
-                                            headers: trumbowyg.o.plugins.upload.headers,
-                                            xhrFields: trumbowyg.o.plugins.upload.xhrFields,
-                                            type: 'POST',
-                                            data: data,
-                                            cache: false,
-                                            dataType: 'json',
-                                            processData: false,
-                                            contentType: false,
-    
-                                            progressUpload: function (e) {
-                                                $('.' + prefix + 'progress-bar').css('width', Math.round(e.loaded * 100 / e.total) + '%');
-                                            },
-    
-                                            success: function (data) {
-                                                if (trumbowyg.o.plugins.upload.success) {
-                                                    trumbowyg.o.plugins.upload.success(data, trumbowyg, $modal, values);
-                                                } else {
-                                                    if (!!getDeep(data, trumbowyg.o.plugins.upload.statusPropertyName.split('.'))) {
-                                                        var url = getDeep(data, trumbowyg.o.plugins.upload.urlPropertyName.split('.'));
-                                                        trumbowyg.execCmd('insertImage', url);
-                                                        var $img = $('img[src="' + url + '"]:not([alt])', trumbowyg.$box);
-                                                        $img.attr('alt', values.alt);
-                                                        if (trumbowyg.o.imageWidthModalEdit && parseInt(values.width) > 0) {
-                                                            $img.attr({
-                                                                width: values.width
-                                                            });
-                                                        }
-                                                        setTimeout(function () {
-                                                            trumbowyg.closeModal();
-                                                        }, 250);
-                                                        trumbowyg.$c.trigger('tbwuploadsuccess', [trumbowyg, data, url]);
-                                                    } else {
-                                                        trumbowyg.addErrorOnModalField(
-                                                            $('input[type=file]', $modal),
-                                                            trumbowyg.lang[data.message]
-                                                        );
-                                                        trumbowyg.$c.trigger('tbwuploaderror', [trumbowyg, data]);
-                                                    }
-                                                }
-                                            },
-    
-                                            error: trumbowyg.o.plugins.upload.error || function () {
-                                                trumbowyg.addErrorOnModalField(
-                                                    $('input[type=file]', $modal),
-                                                    trumbowyg.lang.uploadError
-                                                );
-                                                trumbowyg.$c.trigger('tbwuploaderror', [trumbowyg]);
+                                                            'class': prefix + 'progress'
+                                                        }).append(
+                                                            $('<div/>', {
+                                                                'class': prefix + 'progress-bar'
+                                                            })
+                                                        )
+                                                    );
                                             }
+
+                                            $.ajax({
+                                                url: res.url,
+                                                type: 'POST',
+                                                data: templateFormData,
+        
+                                                progressUpload: function (e) {
+                                                    $('.' + prefix + 'progress-bar').css('width', Math.round(e.loaded * 100 / e.total) + '%');
+                                                },
+        
+                                                success: function (data) {
+                                                    if (trumbowyg.o.plugins.upload.success) {
+                                                        trumbowyg.o.plugins.upload.success(data, trumbowyg, $modal, values);
+                                                    } else {
+                                                        if (!!getDeep(data, trumbowyg.o.plugins.upload.statusPropertyName.split('.'))) {
+                                                            var url = getDeep(data, trumbowyg.o.plugins.upload.urlPropertyName.split('.'));
+                                                            trumbowyg.execCmd('insertImage', url);
+                                                            var $img = $('img[src="' + url + '"]:not([alt])', trumbowyg.$box);
+                                                            $img.attr('alt', values.alt);
+                                                            if (trumbowyg.o.imageWidthModalEdit && parseInt(values.width) > 0) {
+                                                                $img.attr({
+                                                                    width: values.width
+                                                                });
+                                                            }
+                                                            setTimeout(function () {
+                                                                trumbowyg.closeModal();
+                                                            }, 250);
+                                                            trumbowyg.$c.trigger('tbwuploadsuccess', [trumbowyg, data, url]);
+                                                        } else {
+                                                            trumbowyg.addErrorOnModalField(
+                                                                $('input[type=file]', $modal),
+                                                                trumbowyg.lang[data.message]
+                                                            );
+                                                            trumbowyg.$c.trigger('tbwuploaderror', [trumbowyg, data]);
+                                                        }
+                                                    }
+                                                },
+        
+                                                error: trumbowyg.o.plugins.upload.error || function () {
+                                                    trumbowyg.addErrorOnModalField(
+                                                        $('input[type=file]', $modal),
+                                                        trumbowyg.lang.uploadError
+                                                    );
+                                                    trumbowyg.$c.trigger('tbwuploaderror', [trumbowyg]);
+                                                }
+                                            });
+                                        })
+                                        .fail(function() {
+                                            alert( "error getting the S3key" );
                                         });
                                     }
                                 );

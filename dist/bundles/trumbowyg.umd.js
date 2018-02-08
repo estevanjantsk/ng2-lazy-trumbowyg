@@ -77,7 +77,7 @@ var TrumbowygService = /** @class */ (function () {
     function TrumbowygService(loadFiles, config) {
         this.loadFiles = loadFiles;
         this.loadedLangs = [];
-        this.PLUGIN_S3_URL = 'plugins/uploads3/trumbowyg.uploads3.js';
+        this.PLUGIN_S3_URL = './plugins/uploads3/trumbowyg.uploads3.js';
         this.TRUMBOWYG_PREFIX_URL = "https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/" + ((config && config.version) || '2.8.0');
         this.TRUMBOWYG_PLUGINS_PREFIX = this.TRUMBOWYG_PREFIX_URL + '/plugins';
         this.TRUMBOWYG_STYLES_URL = this.TRUMBOWYG_PREFIX_URL + '/ui/trumbowyg.min.css';
