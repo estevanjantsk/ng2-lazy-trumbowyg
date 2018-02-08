@@ -10,7 +10,8 @@
     "build": "npm run transpile && npm run package && npm run minify"
   },
   "dependencies": {
-    "rxjs": ">=5.0.1"
+    "rxjs": ">=5.0.1",
+    "read-file": "^0.2.0"
   },
   "devDependencies": {
     "@angular/core": "^2.4.0",

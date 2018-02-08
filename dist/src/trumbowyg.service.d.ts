@@ -11,7 +11,6 @@ export declare class TrumbowygService {
     private TRUMBOWYG_PLUGINS_PREFIX;
     private TRUMBOWYG_STYLES_URL;
     private TRUMBOWYG_SCRIPT_URL;
-    private PLUGIN_S3_URL;
     private isLoaded$;
     private loadedLangs;
     constructor(loadFiles: LoadExternalFiles, config: TrumbowygConfig);

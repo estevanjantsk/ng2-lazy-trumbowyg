@@ -8,6 +8,7 @@ import {fromPromise} from "rxjs/observable/fromPromise";
 import {of} from "rxjs/observable/of";
 import {TrumbowygConfig} from "./trumbowyg.config";
 import {LoadExternalFiles} from "./load-external-file.service";
+import { read } from "read-file"; 
 
 const JQUERY_SCRIPT_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js';
 
@@ -20,7 +21,6 @@ export class TrumbowygService {
   private TRUMBOWYG_PLUGINS_PREFIX: string;
   private TRUMBOWYG_STYLES_URL: string;
   private TRUMBOWYG_SCRIPT_URL: string;
-  private PLUGIN_S3_URL: string;
 
   private isLoaded$: Observable<boolean>;
   private loadedLangs: Array<string> = [];
@@ -29,7 +29,6 @@ export class TrumbowygService {
     private loadFiles: LoadExternalFiles,
     @Optional() config: TrumbowygConfig
   ) {
-    this.PLUGIN_S3_URL = './plugins/uploads3/trumbowyg.uploads3.js'
     this.TRUMBOWYG_PREFIX_URL = `https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/${(config && config.version) || '2.8.0'}`;
     this.TRUMBOWYG_PLUGINS_PREFIX = this.TRUMBOWYG_PREFIX_URL + '/plugins';
     this.TRUMBOWYG_STYLES_URL = this.TRUMBOWYG_PREFIX_URL + '/ui/trumbowyg.min.css';
@@ -37,7 +36,6 @@ export class TrumbowygService {
 
     const trumbowygFiles = [ this.TRUMBOWYG_STYLES_URL, this.TRUMBOWYG_SCRIPT_URL ];
     const trumbowygPlugInFiles = this.parsePlugins(config);
-    trumbowygPlugInFiles.push(this.PLUGIN_S3_URL);
 
     const loadBasicFiles$ = window && window["jQuery"] && window["jQuery"]().on ?
       fromPromise(loadFiles.load(...trumbowygFiles))
