@@ -45,4 +45,4 @@ typings
 *.ngsummary.json
 *.ngfactory.ts
 /aot/
-/dist/
+# /dist/
