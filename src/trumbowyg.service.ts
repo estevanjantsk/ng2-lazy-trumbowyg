@@ -23,6 +23,7 @@ export class TrumbowygService {
 
   private isLoaded$: Observable<boolean>;
   private loadedLangs: Array<string> = [];
+  private config: TrumbowygConfig;
 
   constructor(
     private loadFiles: LoadExternalFiles,
@@ -32,22 +33,22 @@ export class TrumbowygService {
     this.TRUMBOWYG_PLUGINS_PREFIX = this.TRUMBOWYG_PREFIX_URL + '/plugins';
     this.TRUMBOWYG_STYLES_URL = this.TRUMBOWYG_PREFIX_URL + '/ui/trumbowyg.min.css';
     this.TRUMBOWYG_SCRIPT_URL = this.TRUMBOWYG_PREFIX_URL + '/trumbowyg.min.js';
+    this.config = config;
+  }
 
+  public load(serverPath: string) {
     const trumbowygFiles = [ this.TRUMBOWYG_STYLES_URL, this.TRUMBOWYG_SCRIPT_URL ];
-    const trumbowygPlugInFiles = this.parsePlugins(config);
+    const trumbowygPlugInFiles = this.parsePlugins(this.config, serverPath);
 
     const loadBasicFiles$ = window && window["jQuery"] && window["jQuery"]().on ?
-      fromPromise(loadFiles.load(...trumbowygFiles))
-      : fromPromise(loadFiles.load(JQUERY_SCRIPT_URL))
+      fromPromise(this.loadFiles.load(...trumbowygFiles))
+      : fromPromise(this.loadFiles.load(JQUERY_SCRIPT_URL))
         .switchMap(() =>
-          fromPromise(loadFiles.load(...trumbowygFiles))
+          fromPromise(this.loadFiles.load(...trumbowygFiles))
         );
     const loadFiles$ = loadBasicFiles$
       .switchMap(() =>
-        fromPromise(loadFiles.load(...trumbowygPlugInFiles))
-          .catch(err => of(err))
-      ).switchMap(() =>
-        fromPromise(loadFiles.createUploadS3())
+        fromPromise(this.loadFiles.load(...trumbowygPlugInFiles))
           .catch(err => of(err))
       );
 
@@ -57,12 +58,16 @@ export class TrumbowygService {
       .refCount();
   }
 
-  private parsePlugins(config: TrumbowygConfig): string[] {
+  private parsePlugins(config: TrumbowygConfig, serverPath: string): string[] {
     if (!config ||  !Array.isArray(config.plugins)) { return []; }
 
     return config.plugins.reduce(
       (acc: string[], plugin: string) => {
-        acc.push(`${this.TRUMBOWYG_PLUGINS_PREFIX}/${plugin}/trumbowyg.${plugin}.min.js`);
+        if (plugin === 'uploads3') {
+          acc.push(serverPath)
+        } else {
+          acc.push(`${this.TRUMBOWYG_PLUGINS_PREFIX}/${plugin}/trumbowyg.${plugin}.min.js`);
+        }
         if(plugin === 'emoji' || plugin === 'colors') { //emoji doesn't work yet.
           acc.push(`${this.TRUMBOWYG_PLUGINS_PREFIX}/${plugin}/ui/trumbowyg.${plugin}.min.css`);
         }
@@ -90,3 +95,4 @@ export class TrumbowygService {
       })
   }
 }
+;

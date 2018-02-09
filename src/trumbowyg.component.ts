@@ -51,6 +51,7 @@ export class Trumbowyg implements OnInit, OnDestroy, OnChanges {
   ) {}
 
   ngOnInit () {
+    this.trumbowygService.load(this.options.serverPath);
     this.loaded$ = this.trumbowygService.loaded(this.options.lang).filter(loaded => loaded);
 
     this.loaded$ //initialize
