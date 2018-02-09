@@ -1,7 +1,7 @@
 /// <reference path="read-file.d.ts" />
 
 import {Injectable} from "@angular/core";
-import { read } from "read-file"; 
+import read from "read-file"; 
 
 declare let document: any;
 

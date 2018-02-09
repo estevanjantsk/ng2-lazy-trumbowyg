@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from "@angular/core";
-import { read } from "read-file";
+import read from "read-file";
 var LoadExternalFiles = /** @class */ (function () {
     function LoadExternalFiles() {
     }

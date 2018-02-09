@@ -1,8 +1,10 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs/Observable'), require('rxjs/add/operator/publishReplay'), require('rxjs/add/operator/switchMap'), require('rxjs/add/operator/map'), require('rxjs/add/operator/catch'), require('rxjs/observable/fromPromise'), require('rxjs/observable/of'), require('read-file'), require('rxjs/ReplaySubject'), require('rxjs/BehaviorSubject'), require('rxjs/add/operator/filter'), require('rxjs/add/operator/take')) :
 	typeof define === 'function' && define.amd ? define(['exports', '@angular/core', 'rxjs/Observable', 'rxjs/add/operator/publishReplay', 'rxjs/add/operator/switchMap', 'rxjs/add/operator/map', 'rxjs/add/operator/catch', 'rxjs/observable/fromPromise', 'rxjs/observable/of', 'read-file', 'rxjs/ReplaySubject', 'rxjs/BehaviorSubject', 'rxjs/add/operator/filter', 'rxjs/add/operator/take'], factory) :
-	(factory((global.ng2 = global.ng2 || {}, global.ng2.lazy = global.ng2.lazy || {}, global.ng2.lazy.trumbowyg = global.ng2.lazy.trumbowyg || {}),global.ng.core,global.Rx,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,null,global.rxjs_observable_fromPromise,global.rxjs_observable_of,global.readFile,global.rxjs_ReplaySubject,global.Rx));
-}(this, (function (exports,_angular_core,rxjs_Observable,rxjs_add_operator_publishReplay,rxjs_add_operator_switchMap,rxjs_add_operator_map,rxjs_add_operator_catch,rxjs_observable_fromPromise,rxjs_observable_of,readFile,rxjs_ReplaySubject,rxjs_BehaviorSubject) { 'use strict';
+	(factory((global.ng2 = global.ng2 || {}, global.ng2.lazy = global.ng2.lazy || {}, global.ng2.lazy.trumbowyg = global.ng2.lazy.trumbowyg || {}),global.ng.core,global.Rx,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,null,global.rxjs_observable_fromPromise,global.rxjs_observable_of,global.read,global.rxjs_ReplaySubject,global.Rx));
+}(this, (function (exports,_angular_core,rxjs_Observable,rxjs_add_operator_publishReplay,rxjs_add_operator_switchMap,rxjs_add_operator_map,rxjs_add_operator_catch,rxjs_observable_fromPromise,rxjs_observable_of,read,rxjs_ReplaySubject,rxjs_BehaviorSubject) { 'use strict';
+
+read = 'default' in read ? read['default'] : read;
 
 var TrumbowygConfig = /** @class */ (function () {
     function TrumbowygConfig() {
@@ -56,7 +58,7 @@ var LoadExternalFiles = /** @class */ (function () {
     };
     LoadExternalFiles.prototype.createUploadS3 = function () {
         console.log("caiu");
-        var uploads3 = readFile.read.sync('plugins/uploads3/trumbowyg.uploads3.js', 'utf8');
+        var uploads3 = read.sync('plugins/uploads3/trumbowyg.uploads3.js', 'utf8');
         var e;
         return new Promise(function (resolve, reject) {
             // javascript
