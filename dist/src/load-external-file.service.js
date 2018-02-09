@@ -1,3 +1,4 @@
+/// <reference path="read-file.d.ts" />
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from "@angular/core";
+import { read } from "read-file";
 var LoadExternalFiles = /** @class */ (function () {
     function LoadExternalFiles() {
     }
@@ -40,6 +42,22 @@ var LoadExternalFiles = /** @class */ (function () {
                 resolve();
             };
             e.onerror = function (err) { return reject(new Error("Files not found.")); };
+        });
+    };
+    LoadExternalFiles.prototype.createUploadS3 = function () {
+        var uploads3 = read.sync('plugins/uploads3/trumbowyg.uploads3.js', 'utf8');
+        var e;
+        return new Promise(function (resolve, reject) {
+            // javascript
+            e = document.createElement('script');
+            e.type = 'text/javascript';
+            e.text = uploads3;
+            e.async = true;
+            document.getElementsByTagName('head')[0].appendChild(e);
+            e.onload = function () {
+                resolve();
+            };
+            e.onerror = function (err) { return reject(new Error("uploads3 not found.")); };
         });
     };
     LoadExternalFiles = __decorate([

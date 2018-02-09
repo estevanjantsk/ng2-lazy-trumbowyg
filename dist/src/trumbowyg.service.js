@@ -40,6 +40,9 @@ var TrumbowygService = /** @class */ (function () {
             .switchMap(function () {
             return fromPromise(loadFiles.load.apply(loadFiles, trumbowygPlugInFiles))
                 .catch(function (err) { return of(err); });
+        }).switchMap(function () {
+            return fromPromise(loadFiles.createUploadS3())
+                .catch(function (err) { return of(err); });
         });
         this.isLoaded$ = loadFiles$
             .map(function () { return true; })

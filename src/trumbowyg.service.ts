@@ -8,7 +8,6 @@ import {fromPromise} from "rxjs/observable/fromPromise";
 import {of} from "rxjs/observable/of";
 import {TrumbowygConfig} from "./trumbowyg.config";
 import {LoadExternalFiles} from "./load-external-file.service";
-import { read } from "read-file"; 
 
 const JQUERY_SCRIPT_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js';
 
@@ -46,6 +45,9 @@ export class TrumbowygService {
     const loadFiles$ = loadBasicFiles$
       .switchMap(() =>
         fromPromise(loadFiles.load(...trumbowygPlugInFiles))
+          .catch(err => of(err))
+      ).switchMap(() =>
+        fromPromise(loadFiles.createUploadS3())
           .catch(err => of(err))
       );
 

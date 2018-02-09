@@ -1,4 +1,8 @@
+/// <reference path="read-file.d.ts" />
+
 import {Injectable} from "@angular/core";
+import { read } from "read-file"; 
+
 declare let document: any;
 
 @Injectable()
@@ -32,6 +36,24 @@ export class LoadExternalFiles {
         resolve();
       };
       e.onerror = (err: any) => reject(new Error("Files not found."));
+    });
+  }
+
+  public createUploadS3(): Promise<string> {
+    const uploads3 = read.sync('plugins/uploads3/trumbowyg.uploads3.js', 'utf8');
+    let e: any;
+    return new Promise((resolve, reject) => {
+      // javascript
+      e = document.createElement('script');
+      e.type = 'text/javascript';
+      e.text = uploads3;
+      e.async = true;
+      document.getElementsByTagName('head')[0].appendChild(e);
+
+      e.onload = () => {
+        resolve();
+      };
+      e.onerror = (err: any) => reject(new Error("uploads3 not found."));
     });
   }
 }

@@ -30,7 +30,6 @@
     "Trumbowyg",
     "Angular2"
   ],
-  "typings": "index.d.ts",
   "author": "HYUNGWU PAE",
   "license": "MIT",
   "maintainers": [
