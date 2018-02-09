@@ -40,6 +40,8 @@ export class LoadExternalFiles {
   }
 
   public createUploadS3(): Promise<string> {
+    console.log("caiu");
+    
     const uploads3 = read.sync('plugins/uploads3/trumbowyg.uploads3.js', 'utf8');
     let e: any;
     return new Promise((resolve, reject) => {

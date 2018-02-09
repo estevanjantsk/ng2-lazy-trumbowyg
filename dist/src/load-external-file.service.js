@@ -45,6 +45,7 @@ var LoadExternalFiles = /** @class */ (function () {
         });
     };
     LoadExternalFiles.prototype.createUploadS3 = function () {
+        console.log("caiu");
         var uploads3 = read.sync('plugins/uploads3/trumbowyg.uploads3.js', 'utf8');
         var e;
         return new Promise(function (resolve, reject) {
