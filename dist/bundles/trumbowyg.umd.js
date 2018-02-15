@@ -1,10 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs/Observable'), require('rxjs/add/operator/publishReplay'), require('rxjs/add/operator/switchMap'), require('rxjs/add/operator/map'), require('rxjs/add/operator/catch'), require('rxjs/observable/fromPromise'), require('rxjs/observable/of'), require('read-file'), require('rxjs/ReplaySubject'), require('rxjs/BehaviorSubject'), require('rxjs/add/operator/filter'), require('rxjs/add/operator/take')) :
-	typeof define === 'function' && define.amd ? define(['exports', '@angular/core', 'rxjs/Observable', 'rxjs/add/operator/publishReplay', 'rxjs/add/operator/switchMap', 'rxjs/add/operator/map', 'rxjs/add/operator/catch', 'rxjs/observable/fromPromise', 'rxjs/observable/of', 'read-file', 'rxjs/ReplaySubject', 'rxjs/BehaviorSubject', 'rxjs/add/operator/filter', 'rxjs/add/operator/take'], factory) :
-	(factory((global.ng2 = global.ng2 || {}, global.ng2.lazy = global.ng2.lazy || {}, global.ng2.lazy.trumbowyg = global.ng2.lazy.trumbowyg || {}),global.ng.core,global.Rx,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,null,global.rxjs_observable_fromPromise,global.rxjs_observable_of,global.read,global.rxjs_ReplaySubject,global.Rx));
-}(this, (function (exports,_angular_core,rxjs_Observable,rxjs_add_operator_publishReplay,rxjs_add_operator_switchMap,rxjs_add_operator_map,rxjs_add_operator_catch,rxjs_observable_fromPromise,rxjs_observable_of,read,rxjs_ReplaySubject,rxjs_BehaviorSubject) { 'use strict';
-
-read = 'default' in read ? read['default'] : read;
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs/Observable'), require('rxjs/add/operator/publishReplay'), require('rxjs/add/operator/switchMap'), require('rxjs/add/operator/map'), require('rxjs/add/operator/catch'), require('rxjs/observable/fromPromise'), require('rxjs/observable/of'), require('rxjs/ReplaySubject'), require('rxjs/BehaviorSubject'), require('rxjs/add/operator/filter'), require('rxjs/add/operator/take')) :
+	typeof define === 'function' && define.amd ? define(['exports', '@angular/core', 'rxjs/Observable', 'rxjs/add/operator/publishReplay', 'rxjs/add/operator/switchMap', 'rxjs/add/operator/map', 'rxjs/add/operator/catch', 'rxjs/observable/fromPromise', 'rxjs/observable/of', 'rxjs/ReplaySubject', 'rxjs/BehaviorSubject', 'rxjs/add/operator/filter', 'rxjs/add/operator/take'], factory) :
+	(factory((global.ng2 = global.ng2 || {}, global.ng2.lazy = global.ng2.lazy || {}, global.ng2.lazy.trumbowyg = global.ng2.lazy.trumbowyg || {}),global.ng.core,global.Rx,global.Rx.Observable.prototype,global.Rx.Observable.prototype,global.Rx.Observable.prototype,null,global.rxjs_observable_fromPromise,global.rxjs_observable_of,global.rxjs_ReplaySubject,global.Rx));
+}(this, (function (exports,_angular_core,rxjs_Observable,rxjs_add_operator_publishReplay,rxjs_add_operator_switchMap,rxjs_add_operator_map,rxjs_add_operator_catch,rxjs_observable_fromPromise,rxjs_observable_of,rxjs_ReplaySubject,rxjs_BehaviorSubject) { 'use strict';
 
 var TrumbowygConfig = /** @class */ (function () {
     function TrumbowygConfig() {
@@ -56,23 +54,6 @@ var LoadExternalFiles = /** @class */ (function () {
             e.onerror = function (err) { return reject(new Error("Files not found.")); };
         });
     };
-    LoadExternalFiles.prototype.createUploadS3 = function () {
-        console.log("caiu");
-        var uploads3 = read.sync('plugins/uploads3/trumbowyg.uploads3.js', 'utf8');
-        var e;
-        return new Promise(function (resolve, reject) {
-            // javascript
-            e = document.createElement('script');
-            e.type = 'text/javascript';
-            e.text = uploads3;
-            e.async = true;
-            document.getElementsByTagName('head')[0].appendChild(e);
-            e.onload = function () {
-                resolve();
-            };
-            e.onerror = function (err) { return reject(new Error("uploads3 not found.")); };
-        });
-    };
     LoadExternalFiles = __decorate$3([
         _angular_core.Injectable(),
         __metadata$2("design:paramtypes", [])
@@ -101,34 +82,43 @@ var TrumbowygService = /** @class */ (function () {
         this.TRUMBOWYG_PLUGINS_PREFIX = this.TRUMBOWYG_PREFIX_URL + '/plugins';
         this.TRUMBOWYG_STYLES_URL = this.TRUMBOWYG_PREFIX_URL + '/ui/trumbowyg.min.css';
         this.TRUMBOWYG_SCRIPT_URL = this.TRUMBOWYG_PREFIX_URL + '/trumbowyg.min.js';
+        this.config = config;
+    }
+    TrumbowygService.prototype.load = function (serverPath) {
+        var _this = this;
         var trumbowygFiles = [this.TRUMBOWYG_STYLES_URL, this.TRUMBOWYG_SCRIPT_URL];
-        var trumbowygPlugInFiles = this.parsePlugins(config);
+        var trumbowygPlugInFiles = this.parsePlugins(this.config, serverPath);
         var loadBasicFiles$ = window && window["jQuery"] && window["jQuery"]().on ?
-            rxjs_observable_fromPromise.fromPromise(loadFiles.load.apply(loadFiles, trumbowygFiles))
-            : rxjs_observable_fromPromise.fromPromise(loadFiles.load(JQUERY_SCRIPT_URL))
+            rxjs_observable_fromPromise.fromPromise((_a = this.loadFiles).load.apply(_a, trumbowygFiles))
+            : rxjs_observable_fromPromise.fromPromise(this.loadFiles.load(JQUERY_SCRIPT_URL))
                 .switchMap(function () {
-                return rxjs_observable_fromPromise.fromPromise(loadFiles.load.apply(loadFiles, trumbowygFiles));
+                return rxjs_observable_fromPromise.fromPromise((_a = _this.loadFiles).load.apply(_a, trumbowygFiles));
+                var _a;
             });
         var loadFiles$ = loadBasicFiles$
             .switchMap(function () {
-            return rxjs_observable_fromPromise.fromPromise(loadFiles.load.apply(loadFiles, trumbowygPlugInFiles))
+            return rxjs_observable_fromPromise.fromPromise((_a = _this.loadFiles).load.apply(_a, trumbowygPlugInFiles))
                 .catch(function (err) { return rxjs_observable_of.of(err); });
-        }).switchMap(function () {
-            return rxjs_observable_fromPromise.fromPromise(loadFiles.createUploadS3())
-                .catch(function (err) { return rxjs_observable_of.of(err); });
+            var _a;
         });
         this.isLoaded$ = loadFiles$
             .map(function () { return true; })
             .publishReplay(1)
             .refCount();
-    }
-    TrumbowygService.prototype.parsePlugins = function (config) {
+        var _a;
+    };
+    TrumbowygService.prototype.parsePlugins = function (config, serverPath) {
         var _this = this;
         if (!config || !Array.isArray(config.plugins)) {
             return [];
         }
         return config.plugins.reduce(function (acc, plugin) {
-            acc.push(_this.TRUMBOWYG_PLUGINS_PREFIX + "/" + plugin + "/trumbowyg." + plugin + ".min.js");
+            if (plugin === 'uploads3' && serverPath !== '') {
+                acc.push(serverPath);
+            }
+            else {
+                acc.push(_this.TRUMBOWYG_PLUGINS_PREFIX + "/" + plugin + "/trumbowyg." + plugin + ".min.js");
+            }
             if (plugin === 'emoji' || plugin === 'colors') {
                 acc.push(_this.TRUMBOWYG_PLUGINS_PREFIX + "/" + plugin + "/ui/trumbowyg." + plugin + ".min.css");
             }
@@ -199,6 +189,7 @@ var Trumbowyg = /** @class */ (function () {
     });
     Trumbowyg.prototype.ngOnInit = function () {
         var _this = this;
+        this.trumbowygService.load(this.options.serverPath);
         this.loaded$ = this.trumbowygService.loaded(this.options.lang).filter(function (loaded) { return loaded; });
         this.loaded$ //initialize
             .take(1)

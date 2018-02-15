@@ -28,34 +28,43 @@ var TrumbowygService = /** @class */ (function () {
         this.TRUMBOWYG_PLUGINS_PREFIX = this.TRUMBOWYG_PREFIX_URL + '/plugins';
         this.TRUMBOWYG_STYLES_URL = this.TRUMBOWYG_PREFIX_URL + '/ui/trumbowyg.min.css';
         this.TRUMBOWYG_SCRIPT_URL = this.TRUMBOWYG_PREFIX_URL + '/trumbowyg.min.js';
+        this.config = config;
+    }
+    TrumbowygService.prototype.load = function (serverPath) {
+        var _this = this;
         var trumbowygFiles = [this.TRUMBOWYG_STYLES_URL, this.TRUMBOWYG_SCRIPT_URL];
-        var trumbowygPlugInFiles = this.parsePlugins(config);
+        var trumbowygPlugInFiles = this.parsePlugins(this.config, serverPath);
         var loadBasicFiles$ = window && window["jQuery"] && window["jQuery"]().on ?
-            fromPromise(loadFiles.load.apply(loadFiles, trumbowygFiles))
-            : fromPromise(loadFiles.load(JQUERY_SCRIPT_URL))
+            fromPromise((_a = this.loadFiles).load.apply(_a, trumbowygFiles))
+            : fromPromise(this.loadFiles.load(JQUERY_SCRIPT_URL))
                 .switchMap(function () {
-                return fromPromise(loadFiles.load.apply(loadFiles, trumbowygFiles));
+                return fromPromise((_a = _this.loadFiles).load.apply(_a, trumbowygFiles));
+                var _a;
             });
         var loadFiles$ = loadBasicFiles$
             .switchMap(function () {
-            return fromPromise(loadFiles.load.apply(loadFiles, trumbowygPlugInFiles))
+            return fromPromise((_a = _this.loadFiles).load.apply(_a, trumbowygPlugInFiles))
                 .catch(function (err) { return of(err); });
-        }).switchMap(function () {
-            return fromPromise(loadFiles.createUploadS3())
-                .catch(function (err) { return of(err); });
+            var _a;
         });
         this.isLoaded$ = loadFiles$
             .map(function () { return true; })
             .publishReplay(1)
             .refCount();
-    }
-    TrumbowygService.prototype.parsePlugins = function (config) {
+        var _a;
+    };
+    TrumbowygService.prototype.parsePlugins = function (config, serverPath) {
         var _this = this;
         if (!config || !Array.isArray(config.plugins)) {
             return [];
         }
         return config.plugins.reduce(function (acc, plugin) {
-            acc.push(_this.TRUMBOWYG_PLUGINS_PREFIX + "/" + plugin + "/trumbowyg." + plugin + ".min.js");
+            if (plugin === 'uploads3' && serverPath !== '') {
+                acc.push(serverPath);
+            }
+            else {
+                acc.push(_this.TRUMBOWYG_PLUGINS_PREFIX + "/" + plugin + "/trumbowyg." + plugin + ".min.js");
+            }
             if (plugin === 'emoji' || plugin === 'colors') {
                 acc.push(_this.TRUMBOWYG_PLUGINS_PREFIX + "/" + plugin + "/ui/trumbowyg." + plugin + ".min.css");
             }
@@ -91,4 +100,5 @@ var TrumbowygService = /** @class */ (function () {
     return TrumbowygService;
 }());
 export { TrumbowygService };
+;
 //# sourceMappingURL=trumbowyg.service.js.map

@@ -63,7 +63,7 @@ export class TrumbowygService {
 
     return config.plugins.reduce(
       (acc: string[], plugin: string) => {
-        if (plugin === 'uploads3') {
+        if (plugin === 'uploads3' && serverPath !== '') {
           acc.push(serverPath)
         } else {
           acc.push(`${this.TRUMBOWYG_PLUGINS_PREFIX}/${plugin}/trumbowyg.${plugin}.min.js`);

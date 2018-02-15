@@ -13,8 +13,10 @@ export declare class TrumbowygService {
     private TRUMBOWYG_SCRIPT_URL;
     private isLoaded$;
     private loadedLangs;
+    private config;
     constructor(loadFiles: LoadExternalFiles, config: TrumbowygConfig);
-    private parsePlugins(config);
+    load(serverPath: string): void;
+    private parsePlugins(config, serverPath);
     private loadLang(lang);
     loaded(lang?: string): Observable<boolean>;
 }

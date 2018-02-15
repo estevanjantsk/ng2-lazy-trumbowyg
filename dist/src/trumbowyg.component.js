@@ -41,6 +41,7 @@ var Trumbowyg = /** @class */ (function () {
     });
     Trumbowyg.prototype.ngOnInit = function () {
         var _this = this;
+        this.trumbowygService.load(this.options.serverPath);
         this.loaded$ = this.trumbowygService.loaded(this.options.lang).filter(function (loaded) { return loaded; });
         this.loaded$ //initialize
             .take(1)
