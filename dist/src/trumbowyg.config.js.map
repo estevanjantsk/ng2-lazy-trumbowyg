@@ -1,0 +1,1 @@
+{"version":3,"file":"trumbowyg.config.js","sourceRoot":"","sources":["../../src/trumbowyg.config.ts"],"names":[],"mappings":"AACA;IAAA;IAGA,CAAC;IAAD,sBAAC;AAAD,CAAC,AAHD,IAGC","sourcesContent":["\nexport class TrumbowygConfig {\n  plugins?: string[];\n  version?: string;\n}\n"]}

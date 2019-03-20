@@ -18,9 +18,9 @@
     "@angular/compiler": "^7.2.10",
     "@angular/compiler-cli": "^7.2.10",
     "@angular/core": "^7.2.10",
-    "rollup": "^0.41.6",
+    "rollup": "^1.7.0",
     "typescript": "~3.2.4",
-    "uglify-js": "^2.8.21",
+    "uglify-js": "^3.5.0",
     "zone.js": "^0.8.29"
   },
   "repository": {
