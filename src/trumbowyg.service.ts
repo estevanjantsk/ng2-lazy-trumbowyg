@@ -1,11 +1,6 @@
 import {Optional, Injectable} from "@angular/core";
-import {Observable} from "rxjs/Observable";
-import "rxjs/add/operator/publishReplay";
-import "rxjs/add/operator/switchMap";
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/catch";
-import {fromPromise} from "rxjs/observable/fromPromise";
-import {of} from "rxjs/observable/of";
+import {Observable, from, of} from "rxjs";
+import { publishReplay, switchMap, map, catchError, refCount } from "rxjs/operators";
 import {TrumbowygConfig} from "./trumbowyg.config";
 import {LoadExternalFiles} from "./load-external-file.service";
 
@@ -41,21 +36,27 @@ export class TrumbowygService {
     const trumbowygPlugInFiles = this.parsePlugins(this.config, serverPath);
 
     const loadBasicFiles$ = window && window["jQuery"] && window["jQuery"]().on ?
-      fromPromise(this.loadFiles.load(...trumbowygFiles))
-      : fromPromise(this.loadFiles.load(JQUERY_SCRIPT_URL))
-        .switchMap(() =>
-          fromPromise(this.loadFiles.load(...trumbowygFiles))
+      from(this.loadFiles.load(...trumbowygFiles))
+      : from(this.loadFiles.load(JQUERY_SCRIPT_URL))
+        .pipe(
+          switchMap(() =>
+            from(this.loadFiles.load(...trumbowygFiles))
+          )
         );
     const loadFiles$ = loadBasicFiles$
-      .switchMap(() =>
-        fromPromise(this.loadFiles.load(...trumbowygPlugInFiles))
-          .catch(err => of(err))
+      .pipe(
+        switchMap(() =>
+          from(this.loadFiles.load(...trumbowygPlugInFiles))
+            .pipe(catchError(err => of(err)))
+        )
       );
 
     this.isLoaded$ = loadFiles$
-      .map(() => true)
-      .publishReplay(1)
-      .refCount();
+      .pipe(
+        map(() => true),
+        publishReplay(1),
+        refCount()
+      );
   }
 
   private parsePlugins(config: TrumbowygConfig, serverPath: string): string[] {
@@ -77,22 +78,24 @@ export class TrumbowygService {
 
   private loadLang(lang: string): Observable<any> {
     if(this.loadedLangs.indexOf(lang) < 0)
-      return fromPromise(
+      return from(
         this.loadFiles.load(`${this.TRUMBOWYG_PREFIX_URL}/langs/${lang}.min.js`)
           .then(() => {
             this.loadedLangs.push(lang);
             return true;
           })
       );
-    return fromPromise(Promise.resolve(true));
+    return from(Promise.resolve(true));
   }
 
   public loaded(lang?: string): Observable<boolean> {
     return this.isLoaded$
-      .switchMap(() => {
-        if(lang) return this.loadLang(lang);
-        else return of(true);
-      })
+      .pipe(
+        switchMap(() => {
+          if(lang) return this.loadLang(lang);
+          else return of(true);
+        })
+      )
   }
 }
 ;

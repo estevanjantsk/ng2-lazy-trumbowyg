@@ -4,23 +4,24 @@
   "description": "Angular 2 Component for lazy loading of Trumbowyg wysiwyg editor",
   "main": "index.js",
   "scripts": {
-    "transpile": "ngc",
+    "transpile": "./node_modules/.bin/ngc",
     "package": "rollup -c",
     "minify": "uglifyjs dist/bundles/trumbowyg.umd.js --screw-ie8 --compress --mangle --comments --output dist/bundles/trumbowyg.umd.min.js",
     "build": "npm run transpile && npm run package && npm run minify"
   },
   "dependencies": {
-    "rxjs": ">=5.0.1",
-    "read-file": "^0.2.0"
+    "@angular/cli": "^7.3.6",
+    "read-file": "^0.2.0",
+    "rxjs": ">=5.0.1"
   },
   "devDependencies": {
-    "@angular/core": "^2.4.0",
-    "@angular/compiler": "^2.4.0",
-    "@angular/compiler-cli": "^2.4.0",
+    "@angular/compiler": "^7.2.10",
+    "@angular/compiler-cli": "^7.2.10",
+    "@angular/core": "^7.2.10",
     "rollup": "^0.41.6",
-    "typescript": "^2.0.10",
+    "typescript": "~3.2.4",
     "uglify-js": "^2.8.21",
-    "zone.js": "^0.7.2"
+    "zone.js": "^0.8.29"
   },
   "repository": {
     "type": "git",

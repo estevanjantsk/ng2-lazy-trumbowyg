@@ -1,14 +1,9 @@
 import {
   Component, ElementRef, OnDestroy, Input, OnInit, EventEmitter, Output, OnChanges, SimpleChanges
 } from '@angular/core';
-import {Observable} from "rxjs/Observable";
+import { Observable, ReplaySubject, Subject, BehaviorSubject } from "rxjs";
+import { take, filter, switchMap } from "rxjs/operators";
 import {TrumbowygService} from "./trumbowyg.service";
-import {Subject} from "rxjs/Subject";
-import {ReplaySubject} from "rxjs/ReplaySubject";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import "rxjs/add/operator/filter";
-import "rxjs/add/operator/take";
-import "rxjs/add/operator/switchMap";
 declare const jQuery: any;
 
 @Component({
@@ -52,10 +47,10 @@ export class Trumbowyg implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit () {
     this.trumbowygService.load(this.options.serverPath);
-    this.loaded$ = this.trumbowygService.loaded(this.options.lang).filter(loaded => loaded);
+    this.loaded$ = this.trumbowygService.loaded(this.options.lang).pipe(filter((loaded: any) => loaded));
 
     this.loaded$ //initialize
-      .take(1)
+      .pipe(take(1))
       .subscribe(() => {
         this.trumbowygEl = jQuery(this.el.nativeElement).find('#ng-trumbowyg');
         this.trumbowygEl.trumbowyg(this.options);
@@ -68,8 +63,10 @@ export class Trumbowyg implements OnInit, OnDestroy, OnChanges {
 
       });
 
-    this.contentSub = this.readyToUse$.take(1)
-      .switchMap(() => this.content$.filter(content => !!content))
+    this.contentSub = this.readyToUse$.pipe(take(1))
+      .pipe(
+        switchMap(() => this.content$.pipe(filter(content => !!content)))
+      )
       .subscribe(content => {
         if(content) {
           this.trumbowygEl.trumbowyg('html', content);
@@ -78,8 +75,11 @@ export class Trumbowyg implements OnInit, OnDestroy, OnChanges {
       });
 
     this.updateSubscription = this.update ?
-      this.readyToUse$.take(1)
-        .switchMap(() => this.update)
+      this.readyToUse$
+        .pipe(
+          take(1),
+          switchMap(() => this.update)
+        )
         .subscribe(() => {
           this.savedContent.emit(this.trumbowygEl.trumbowyg('html'));
         }) : null;
